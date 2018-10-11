@@ -14,21 +14,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
-    public static void main(String[] args) {
-        List<Meal> mealList = Arrays.asList(
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30,10,0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30,13,0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30,20,0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31,10,0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31,13,0), "Обед", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31,20,0), "Ужин", 510)
+
+    public static List<Meal> mealsList;
+    private static final int CALORIES_LIMIT = 2000;
+    static {
+        mealsList = Arrays.asList(
+                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
+                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
         );
-        getFilteredWithExceeded(mealList, LocalTime.of(7, 0), LocalTime.of(12,0), 2000);
-//        .toLocalDate();
-//        .toLocalTime();
     }
 
-    public static List<MealWithExceed>  getFilteredWithExceeded(List<Meal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealWithExceed> getAllMealsWithExceed() {
+        return getFilteredWithExceeded(mealsList, LocalTime.of(0,0,0),
+                LocalTime.of(23, 59, 59), CALORIES_LIMIT);
+    }
+
+    public static List<MealWithExceed> getFilteredWithExceeded(List<Meal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
         List<MealWithExceed> result;
         if (mealList == null || mealList.isEmpty() || endTime.isBefore(startTime)) {
             result = Collections.emptyList();
