@@ -4,33 +4,21 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ru.javawebinar.topjava.model.MealWithExceed.CALORIES_LIMIT;
+
 public class MealsUtil {
 
-    public static List<Meal> mealsList;
-    private static final int CALORIES_LIMIT = 2000;
-    static {
-        mealsList = Arrays.asList(
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак", 1000),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед", 500),
-                new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин", 510)
-        );
-    }
+    private static final LocalTime LOCAL_TIME_MIN = LocalTime.of(0,0,0);
+    private static final LocalTime LOCAL_TIME_MAX = LocalTime.of(23,59,59);
 
-    public static List<MealWithExceed> getAllMealsWithExceed() {
-        return getFilteredWithExceeded(mealsList, LocalTime.of(0,0,0),
-                LocalTime.of(23, 59, 59), CALORIES_LIMIT);
+    public static List<MealWithExceed> getAllMealsWithExceed(List<Meal> mealsList) {
+        return getFilteredWithExceeded(mealsList, LOCAL_TIME_MIN, LOCAL_TIME_MAX, CALORIES_LIMIT);
     }
 
     public static List<MealWithExceed> getFilteredWithExceeded(List<Meal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
@@ -46,7 +34,7 @@ public class MealsUtil {
                     .stream()
                     .filter(m -> TimeUtil.isBetween(m.getTime(), startTime, endTime))
                     .map(m -> new MealWithExceed(m.getDateTime(), m.getDescription(),
-                            m.getCalories(), caloriesPerDayMap.get(m.getDate()) > caloriesPerDay))
+                            m.getCalories(), m.getId(), caloriesPerDayMap.get(m.getDate()) > caloriesPerDay))
                     .collect(Collectors.toList());
         }
         return result;
