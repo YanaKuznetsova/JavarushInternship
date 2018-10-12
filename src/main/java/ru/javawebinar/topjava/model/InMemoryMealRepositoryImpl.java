@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import ru.javawebinar.topjava.util.MealsUtil;
+
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryMealRepositoryImpl implements MealRepository {
+
     private static AtomicInteger idCounter = new AtomicInteger(1);
     private static List<Meal> mealList = new CopyOnWriteArrayList<>(Arrays.asList(
             new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак",
@@ -24,6 +26,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин",
                     510, idCounter.getAndIncrement())
     ));
+
     @Override
     public void deleteMeal(int id) {
         int index = -1;
@@ -37,10 +40,12 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
             mealList.remove(index);
         }
     }
+
     @Override
     public List<MealWithExceed> getAllMeals() {
-        return MealsUtil.getAllMealsWithExceed(mealList);
+        return MealsUtil.getAllWithExceed(mealList);
     }
+
     @Override
     public Meal getMealById(int id) {
         Meal result = null;
@@ -52,6 +57,7 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         }
         return result;
     }
+
     @Override
     public void updateMeal(LocalDateTime dateTime, String description, int calories, int id) {
         Meal oldMeal = getMealById(id);
@@ -59,8 +65,10 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         oldMeal.setDateTime(dateTime);
         oldMeal.setDescription(description);
     }
+
     @Override
     public void addMeal(LocalDateTime dateTime, String description, int calories) {
         mealList.add(new Meal(dateTime, description, calories, idCounter.getAndIncrement()));
     }
+
 }
