@@ -1,8 +1,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
+<style>
+    .normal {
+        color: green;
+    }
+
+    .exceeded {
+        color: red;
+    }
+</style>
+
 <head>
     <title>Meals</title>
 </head>
@@ -19,9 +30,10 @@
         <td>Calories</td>
     </tr>
     <c:forEach items="${mealsList}" var="meal">
-        <tr style="${meal.exceed == true ? 'color:red':'color:green'}">
+        <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.model.MealWithExceed"/>
+        <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
             <td>${meal.id}</td>
-            <td>${dateTimeFormatter.format(meal.dateTime)}</td>
+            <td>${fn:formatDateTime(meal.dateTime)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
             <td><a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
