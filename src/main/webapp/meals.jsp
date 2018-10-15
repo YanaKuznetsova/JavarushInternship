@@ -8,7 +8,6 @@
     .normal {
         color: green;
     }
-
     .exceeded {
         color: red;
     }
@@ -19,7 +18,7 @@
 </head>
 
 <body>
-<h3><a href="index.jsp">Home</a></h3>
+<h3><a href="index.html">Home</a></h3>
 <h2>Meals</h2>
 
 <table border="0" cellspacing="2" cellpadding="4">
