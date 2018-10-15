@@ -4,7 +4,10 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +18,20 @@ import static java.util.stream.Collectors.toList;
 import static ru.javawebinar.topjava.model.MealWithExceed.CALORIES_LIMIT;
 
 public class MealsUtil {
+
+    public static final List<Meal> mealsList = Arrays.asList(
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак",
+                    500),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед",
+                    1000),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин",
+                    500),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак",
+                    1000),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед",
+                    500),
+            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин",
+                    510));
 
     private static final LocalTime LOCAL_TIME_MIN = LocalTime.of(0,0,0);
     private static final LocalTime LOCAL_TIME_MAX = LocalTime.of(23,59,59);
