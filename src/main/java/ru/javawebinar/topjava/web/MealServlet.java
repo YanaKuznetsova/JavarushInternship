@@ -37,17 +37,19 @@ public class MealServlet extends HttpServlet {
 
         if (action != null && action.equalsIgnoreCase("delete")){
             int id = Integer.parseInt(request.getParameter("id"));
-            mealRepository.deleteMeal(id);
+            log.info("Delete {}", mealRepository.get(id));
+            mealRepository.delete(id);
             forward = LIST_MEAL;
-            request.setAttribute("mealsList", mealRepository.getAllMeals());
+            request.setAttribute("mealsList", mealRepository.getAllWithExceed());
         } else if (action != null && action.equalsIgnoreCase("edit")){
             forward = INSERT_OR_EDIT;
             int id = Integer.parseInt(request.getParameter("id"));
-            Meal mealToEdit = mealRepository.getMealById(id);
+            Meal mealToEdit = mealRepository.get(id);
+            log.info("Edit {}", mealRepository.get(id));
             request.setAttribute("mealToEdit", mealToEdit);
         } else if (action != null && action.equalsIgnoreCase("listMeals")){
             forward = LIST_MEAL;
-            request.setAttribute("mealsList", mealRepository.getAllMeals());
+            request.setAttribute("mealsList", mealRepository.getAllWithExceed());
         } else {
             forward = INSERT_OR_EDIT;
         }
@@ -57,20 +59,19 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+
         String description = request.getParameter("description");
         int calories = Integer.parseInt(request.getParameter("calories"));
         LocalDateTime dateTime = TimeUtil.parseDateTime(request.getParameter("dateTime"));
-        int id = 0;
-        try {
-            id = Integer.parseInt(request.getParameter("id"));
-        } catch (NumberFormatException ignored) {}
-        if(id > 0) {
-            mealRepository.updateMeal(dateTime, description, calories, id);
-        } else {
-            mealRepository.addMeal(dateTime, description, calories);
-        }
+        String stringId = request.getParameter("id");
+        Integer id = stringId.isEmpty() ? null : Integer.valueOf(stringId);
+        Meal meal = new Meal(dateTime, description, calories, id);
+
+        mealRepository.save(meal);
+        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
+
         RequestDispatcher view = request.getRequestDispatcher(LIST_MEAL);
-        request.setAttribute("mealsList", mealRepository.getAllMeals());
+        request.setAttribute("mealsList", mealRepository.getAllWithExceed());
         view.forward(request, response);
     }
 
