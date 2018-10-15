@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.util.Collection;
@@ -43,6 +44,11 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     @Override
     public Collection<Meal> getAll() {
         return repository.values();
+    }
+
+    @Override
+    public Collection<MealWithExceed> getAllWithExceed() {
+        return MealsUtil.getAllWithExceed(repository.values());
     }
 
 }
