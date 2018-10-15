@@ -1,76 +1,48 @@
 package ru.javawebinar.topjava.repository;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.util.MealsUtil;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Collection;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryMealRepositoryImpl implements MealRepository {
 
-    private static AtomicInteger idCounter = new AtomicInteger(1);
-    private static List<Meal> mealList = new CopyOnWriteArrayList<>(Arrays.asList(
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак",
-                    500, idCounter.getAndIncrement()),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "Обед",
-                    1000, idCounter.getAndIncrement()),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "Ужин",
-                    500, idCounter.getAndIncrement()),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "Завтрак",
-                    1000, idCounter.getAndIncrement()),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "Обед",
-                    500, idCounter.getAndIncrement()),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин",
-                    510, idCounter.getAndIncrement())
-    ));
+    private static AtomicInteger idCounter = new AtomicInteger(0);
+    private static Map<Integer, Meal> repository = new ConcurrentHashMap<>();
 
-    @Override
-    public void deleteMeal(int id) {
-        int index = -1;
-        for (int i = 0; i < mealList.size(); i++) {
-            if (mealList.get(i).getId() == id) {
-                index = i;
-                break;
-            }
-        }
-        if (index > -1) {
-            mealList.remove(index);
-        }
+    public InMemoryMealRepositoryImpl() {
+        MealsUtil.mealsList.forEach(this::save);
     }
 
     @Override
-    public List<MealWithExceed> getAllMeals() {
-        return MealsUtil.getAllWithExceed(mealList);
-    }
-
-    @Override
-    public Meal getMealById(int id) {
-        Meal result = null;
-        for (Meal meal: mealList) {
-            if (meal.getId() == id) {
-                result = meal;
-                break;
-            }
+    public Meal save(Meal meal) {
+        Meal result;
+        if (meal.isNew()) {
+            meal.setId(idCounter.getAndIncrement());
+            repository.put(meal.getId(), meal);
+            result = meal;
+        } else {
+            result = repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
         }
         return result;
     }
 
     @Override
-    public void updateMeal(LocalDateTime dateTime, String description, int calories, int id) {
-        Meal oldMeal = getMealById(id);
-        oldMeal.setCalories(calories);
-        oldMeal.setDateTime(dateTime);
-        oldMeal.setDescription(description);
+    public void delete(int id) {
+        repository.remove(id);
     }
 
     @Override
-    public void addMeal(LocalDateTime dateTime, String description, int calories) {
-        mealList.add(new Meal(dateTime, description, calories, idCounter.getAndIncrement()));
+    public Meal get(int id) {
+        return repository.get(id);
+    }
+
+    @Override
+    public Collection<Meal> getAll() {
+        return repository.values();
     }
 
 }
