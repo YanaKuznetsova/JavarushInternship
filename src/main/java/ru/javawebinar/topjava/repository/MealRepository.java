@@ -11,8 +11,6 @@ public interface MealRepository {
     void delete(int id);
     Meal get(int id);
     Collection<Meal> getAll();
-
     Collection<MealWithExceed> getAllWithExceed();
-
 
 }
