@@ -19,6 +19,10 @@ import static ru.javawebinar.topjava.model.MealWithExceed.CALORIES_LIMIT;
 
 public class MealsUtil {
 
+    public static final int DEFAULT_CALORIES_PER_DAY = 2000;
+    private static final LocalTime LOCAL_TIME_MIN = LocalTime.of(0, 0, 0);
+    private static final LocalTime LOCAL_TIME_MAX = LocalTime.of(23, 59, 59);
+
     public static final List<Meal> mealsList = Arrays.asList(
             new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "Завтрак",
                     500),
@@ -32,9 +36,6 @@ public class MealsUtil {
                     500),
             new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин",
                     510));
-
-    private static final LocalTime LOCAL_TIME_MIN = LocalTime.of(0,0,0);
-    private static final LocalTime LOCAL_TIME_MAX = LocalTime.of(23,59,59);
 
     public static MealWithExceed convertToExceed(Meal meal, boolean exceeded) {
         return new MealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
