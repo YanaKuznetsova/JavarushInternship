@@ -23,8 +23,9 @@ public class MealServlet extends HttpServlet {
 
     private MealRepository mealRepository;
 
-    public MealServlet(){
-        super();
+    @Override
+    public void init() throws ServletException {
+        super.init();
         mealRepository = new InMemoryMealRepositoryImpl();
     }
 
