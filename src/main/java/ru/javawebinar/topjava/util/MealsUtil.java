@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.model.MealWithExceed;
+import ru.javawebinar.topjava.to.MealWithExceed;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,7 +15,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static ru.javawebinar.topjava.model.MealWithExceed.CALORIES_LIMIT;
 
 public class MealsUtil {
 
@@ -43,7 +42,7 @@ public class MealsUtil {
     }
 
     public static List<MealWithExceed> getAllWithExceed(Collection<Meal> mealsList) {
-        return getFilteredWithExceeded(mealsList, CALORIES_LIMIT, meal -> true);
+        return getFilteredWithExceeded(mealsList, DEFAULT_CALORIES_PER_DAY, meal -> true);
     }
 
     public static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> meals, int caloriesPerDay,

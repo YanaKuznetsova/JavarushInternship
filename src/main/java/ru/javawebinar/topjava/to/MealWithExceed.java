@@ -1,20 +1,14 @@
-package ru.javawebinar.topjava.model;
+package ru.javawebinar.topjava.to;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class MealWithExceed {
 
-    public static final int CALORIES_LIMIT = 2000;
-
     private final LocalDateTime dateTime;
-
     private final String description;
-
     private final int calories;
-
     private final boolean exceed;
-
     private final Integer id;
 
     public MealWithExceed(LocalDateTime dateTime, String description, int calories, Integer id, boolean exceed) {
