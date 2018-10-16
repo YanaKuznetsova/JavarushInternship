@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.repository.mock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.MealWithExceed;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -12,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class InMemoryMealRepositoryImpl implements MealRepository {
 
+    private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
     private static AtomicInteger idCounter = new AtomicInteger(0);
     private static Map<Integer, Meal> repository = new ConcurrentHashMap<>();
 
@@ -29,16 +32,19 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         } else {
             result = repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
         }
+        log.info("Save meal with id = {}", result.getId());
         return result;
     }
 
     @Override
     public void delete(int id) {
         repository.remove(id);
+        log.info("Delete meal with id = {}", id);
     }
 
     @Override
     public Meal get(int id) {
+        log.info("Get meal with id = {}", id);
         return repository.get(id);
     }
 
