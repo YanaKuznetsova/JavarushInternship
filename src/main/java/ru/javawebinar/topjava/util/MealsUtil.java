@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.util;
 
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.to.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,23 +36,23 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "Ужин",
                     510));
 
-    public static MealWithExceed convertToExceed(Meal meal, boolean exceeded) {
-        return new MealWithExceed(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
+    public static MealTo convertToExcess(Meal meal, boolean exceeded) {
+        return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
                 meal.getId(), exceeded);
     }
 
-    public static List<MealWithExceed> getAllWithExceed(Collection<Meal> mealsList) {
-        return getFilteredWithExceeded(mealsList, DEFAULT_CALORIES_PER_DAY, meal -> true);
+    public static List<MealTo> getWithExcess(Collection<Meal> mealsList) {
+        return getFilteredWithExcess(mealsList, DEFAULT_CALORIES_PER_DAY, meal -> true);
     }
 
-    public static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> meals, int caloriesPerDay,
-                                                               LocalTime startTime, LocalTime endTime) {
-        return getFilteredWithExceeded(meals, caloriesPerDay,
+    public static List<MealTo> getFilteredWithExcess(Collection<Meal> meals, int caloriesPerDay,
+                                                     LocalTime startTime, LocalTime endTime) {
+        return getFilteredWithExcess(meals, caloriesPerDay,
                 meal -> TimeUtil.isBetween(meal.getTime(), startTime, endTime));
     }
 
-    public static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> mealList, int caloriesPerDay,
-                                                               Predicate<Meal> filter) {
+    public static List<MealTo> getFilteredWithExcess(Collection<Meal> mealList, int caloriesPerDay,
+                                                     Predicate<Meal> filter) {
         Map<LocalDate, Integer> caloriesSumByDate = mealList.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
@@ -60,7 +60,7 @@ public class MealsUtil {
 
         return mealList.stream()
                 .filter(filter)
-                .map(meal -> convertToExceed(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .map(meal -> convertToExcess(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
                 .collect(toList());
     }
 
