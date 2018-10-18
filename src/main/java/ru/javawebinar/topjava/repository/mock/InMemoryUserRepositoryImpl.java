@@ -16,7 +16,11 @@ import java.util.stream.Collectors;
 
 @Repository
 public class InMemoryUserRepositoryImpl implements UserRepository {
+
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
+
+    public static final int USER_ID = 1;
+    public static final int ADMIN_ID = 2;
 
     private static AtomicInteger idCounter = new AtomicInteger(0);
     private static Map<Integer, User> repository = new ConcurrentHashMap<>();
@@ -38,7 +42,6 @@ public class InMemoryUserRepositoryImpl implements UserRepository {
         } else {
             result = repository.computeIfPresent(user.getId(), (id, oldUser) -> user);
         }
-        log.info("Save meal with id = {}", result.getId());
         return result;
     }
 

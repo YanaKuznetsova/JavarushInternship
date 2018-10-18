@@ -3,92 +3,84 @@ package ru.javawebinar.topjava.repository.mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.util.Util;
-import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.Month;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static ru.javawebinar.topjava.repository.mock.InMemoryUserRepositoryImpl.ADMIN_ID;
+import static ru.javawebinar.topjava.repository.mock.InMemoryUserRepositoryImpl.USER_ID;
 
 @Repository
 public class InMemoryMealRepositoryImpl implements MealRepository {
 
     private static final Logger log = LoggerFactory.getLogger(InMemoryUserRepositoryImpl.class);
     private static AtomicInteger idCounter = new AtomicInteger(0);
-    private static Map<Integer, Meal> repository = new ConcurrentHashMap<>();
+    private static Map<Integer, Map<Integer, Meal>> repository = new ConcurrentHashMap<>();
 
     public InMemoryMealRepositoryImpl() {
-        MealsUtil.mealsList.forEach(this::save);
+        MealsUtil.mealsList.forEach(meal -> save(meal, USER_ID));
+        save(new Meal(LocalDateTime.of(2015, Month.JUNE, 1, 14, 0), "Админ ланч", 510), ADMIN_ID);
+        save(new Meal(LocalDateTime.of(2015, Month.JUNE, 1, 21, 0), "Админ ужин", 1500), ADMIN_ID);
     }
 
     @Override
-    public Meal save(Meal meal) {
-        Meal result = null;
-        int userId = SecurityUtil.authUserId();
+    public Meal save(Meal meal, int userId) {
+        log.info("save, userId = {}", userId);
+        Map<Integer, Meal> meals = repository.computeIfAbsent(userId, ConcurrentHashMap::new);
         if (meal.isNew()) {
-            meal.setId(idCounter.getAndIncrement());
-            meal.setUserId(userId);
-            repository.put(meal.getId(), meal);
-            result = meal;
-            log.info("Save new meal with id = {}, userId = {}", result.getId(), userId);
-        } else {
-            if (meal.getUserId() == userId) {
-                result = repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
-                log.info("Update meal with id = {}, userId = {}", result.getId(), userId);
-            }
+            meal.setId(idCounter.incrementAndGet());
+            meals.put(meal.getId(), meal);
+            return meal;
         }
-        return result;
+        return meals.computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
-    public boolean delete(int id) {
-        boolean result = false;
-        Meal meal = repository.getOrDefault(id, null);
-        int userId = SecurityUtil.authUserId();
-        if (meal != null && userId == meal.getUserId()) {
-            repository.remove(id);
-            log.info("Delete meal with id = {}, userId = {}", id, userId);
-            result = true;
-        }
-        return result;
+    public boolean delete(int id, int userId) {
+        log.info("delete, id = {}, userId = {}", id, userId);
+        Map<Integer, Meal> userMealMap = repository.get(userId);
+        return userMealMap != null && userMealMap.remove(id) != null;
     }
 
     @Override
-    public Meal get(int id) {
-        int userId = SecurityUtil.authUserId();
-        Meal result = repository.getOrDefault(id, null);
-        if (result != null && userId == result.getUserId()) {
-            log.info("Get meal with id = {}, userId = {}", id, userId);
-        } else {
-            result = null;
-        }
-        return result;
+    public Meal get(int id, int userId) {
+        log.info("get, id = {}, userId = {}", id, userId);
+        Map<Integer, Meal> userMealMap = repository.get(userId);
+        return userMealMap == null ? null : userMealMap.get(id);
     }
 
     @Override
-    public List<Meal> getAll() {
-        int userId = SecurityUtil.authUserId();
+    public List<Meal> getAll(int userId) {
         log.info("getAll, userId = {}", userId);
-        return new ArrayList<>(repository.values())
-                .stream()
-                .filter((meal) -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+        return getFiltered(userId, meal -> true);
     }
 
     @Override
-    public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate) {
-        return getAll()
+    public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
+        log.info("getBetween, userId = {}", userId);
+        return getFiltered(userId, meal -> Util.isBetween(meal.getDateTime(), startDate, endDate));
+    }
+
+    private List<Meal> getFiltered(int userId, Predicate<Meal> filter) {
+        Map<Integer, Meal> userMealMap = repository.get(userId);
+        return CollectionUtils.isEmpty(userMealMap) ?
+                Collections.EMPTY_LIST : userMealMap.values()
                 .stream()
-                .filter((meal) -> Util.isBetween(meal.getDateTime(), startDate, endDate))
+                .filter(filter)
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
     }
 
