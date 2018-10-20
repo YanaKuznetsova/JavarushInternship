@@ -21,6 +21,26 @@
 <h3><a href="index.html">Home</a></h3>
 <h2>Meals</h2>
 
+<table>
+    <form method="POST" action="meals?action=filter" name="filterMealsByDate">
+        <tr>
+            <td>From date:</td>
+            <td><input type="date" name="startDate" value="${param.startDate}"></td>
+            <td>From time:</td>
+            <td><input type="time" name="startTime" value="${param.startTime}"></td>
+        </tr>
+        <tr>
+            <td>To date:</td>
+            <td><input type="date" name="endDate" value="${param.endDate}"></td>
+            <td>To time:</td>
+            <td><input type="time" name="endTime" value="${param.endTime}"></td>
+        </tr>
+        <tr>
+            <button type="submit">Filter</button>
+        </tr>
+    </form>
+</table>
+
 <table border="0" cellspacing="2" cellpadding="4">
     <tr style="font-weight: bold">
         <td>Id</td>

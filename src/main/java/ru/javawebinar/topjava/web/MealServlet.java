@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class MealServlet extends HttpServlet {
 
@@ -46,19 +48,19 @@ public class MealServlet extends HttpServlet {
         String forward = "";
         String action = request.getParameter("action");
 
-        if (action != null && action.equalsIgnoreCase("delete")){
+        if (action.equalsIgnoreCase("delete")) {
             int id = Integer.parseInt(request.getParameter("id"));
             log.info("Delete {}", mealController.get(id));
             mealController.delete(id);
             forward = LIST_MEAL;
             request.setAttribute("mealsList", mealController.getAll());
-        } else if (action != null && action.equalsIgnoreCase("edit")){
+        } else if (action.equalsIgnoreCase("edit")) {
             forward = INSERT_OR_EDIT;
             int id = Integer.parseInt(request.getParameter("id"));
             Meal mealToEdit = mealController.get(id);
             log.info("Edit {}", mealToEdit);
             request.setAttribute("mealToEdit", mealToEdit);
-        } else if (action != null && action.equalsIgnoreCase("listMeals")){
+        } else if (action.equalsIgnoreCase("listMeals")) {
             forward = LIST_MEAL;
             request.setAttribute("mealsList", mealController.getAll());
         } else {
@@ -70,20 +72,29 @@ public class MealServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        String action = request.getParameter("action");
+        if (action.equalsIgnoreCase("filter")) {
+            LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+            LocalTime startTime = LocalTime.parse(request.getParameter("startTime"));
+            LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+            LocalTime endTime = LocalTime.parse(request.getParameter("endTime"));
+            request.setAttribute("mealsList", mealController.getBetween(startDate, startTime, endDate, endTime));
+            request.getRequestDispatcher(LIST_MEAL).forward(request, response);
+        } else {
+            String description = request.getParameter("description");
+            int calories = Integer.parseInt(request.getParameter("calories"));
+            LocalDateTime dateTime = TimeUtil.parseDateTime(request.getParameter("dateTime"));
+            String stringId = request.getParameter("id");
+            Integer id = stringId.isEmpty() ? null : Integer.valueOf(stringId);
+            Meal meal = new Meal(dateTime, description, calories, id);
 
-        String description = request.getParameter("description");
-        int calories = Integer.parseInt(request.getParameter("calories"));
-        LocalDateTime dateTime = TimeUtil.parseDateTime(request.getParameter("dateTime"));
-        String stringId = request.getParameter("id");
-        Integer id = stringId.isEmpty() ? null : Integer.valueOf(stringId);
-        Meal meal = new Meal(dateTime, description, calories, id);
+            mealController.create(meal);
+            log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
 
-        mealController.create(meal);
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-
-        RequestDispatcher view = request.getRequestDispatcher(LIST_MEAL);
-        request.setAttribute("mealsList", mealController.getAll());
-        view.forward(request, response);
+            RequestDispatcher view = request.getRequestDispatcher(LIST_MEAL);
+            request.setAttribute("mealsList", mealController.getAll());
+            view.forward(request, response);
+        }
     }
 
 }
