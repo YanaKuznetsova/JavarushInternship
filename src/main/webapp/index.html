@@ -7,8 +7,11 @@
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
 <ul>
-    <li><a href="users">Users</a></li>
-    <li><a href="meals?action=listMeals">Meals</a></li>
+    <form method="post" action="users">
+        <p><input name="userId" type="radio" value="1"> User</p>
+        <p><input name="userId" type="radio" value="2"> Admin</p>
+        <p><input type="submit" value="Select"></p>
+    </form>
 </ul>
 </body>
 </html>

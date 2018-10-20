@@ -47,6 +47,7 @@ public class MealServlet extends HttpServlet {
 
         String forward = "";
         String action = request.getParameter("action");
+        action = action == null ? "listMeals" : action;
 
         if (action.equalsIgnoreCase("delete")) {
             int id = Integer.parseInt(request.getParameter("id"));
@@ -73,27 +74,30 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        if (action.equalsIgnoreCase("filter")) {
-            LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
-            LocalTime startTime = LocalTime.parse(request.getParameter("startTime"));
-            LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
-            LocalTime endTime = LocalTime.parse(request.getParameter("endTime"));
-            request.setAttribute("mealsList", mealController.getBetween(startDate, startTime, endDate, endTime));
-            request.getRequestDispatcher(LIST_MEAL).forward(request, response);
-        } else {
+        if (action == null) {
             String description = request.getParameter("description");
             int calories = Integer.parseInt(request.getParameter("calories"));
             LocalDateTime dateTime = TimeUtil.parseDateTime(request.getParameter("dateTime"));
             String stringId = request.getParameter("id");
             Integer id = stringId.isEmpty() ? null : Integer.valueOf(stringId);
             Meal meal = new Meal(dateTime, description, calories, id);
-
-            mealController.create(meal);
-            log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-
+            if (meal.isNew()) {
+                mealController.create(meal);
+                log.info("Create");
+            } else {
+                mealController.update(meal, id);
+                log.info("Update id = {}", id);
+            }
             RequestDispatcher view = request.getRequestDispatcher(LIST_MEAL);
             request.setAttribute("mealsList", mealController.getAll());
             view.forward(request, response);
+        } else if (action.equalsIgnoreCase("filter")) {
+            LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
+            LocalTime startTime = LocalTime.parse(request.getParameter("startTime"));
+            LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
+            LocalTime endTime = LocalTime.parse(request.getParameter("endTime"));
+            request.setAttribute("mealsList", mealController.getBetween(startDate, startTime, endDate, endTime));
+            request.getRequestDispatcher(LIST_MEAL).forward(request, response);
         }
     }
 
