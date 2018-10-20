@@ -13,6 +13,7 @@ import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -62,14 +63,15 @@ public class MealRestController {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween dates {} - {} and times {} - {} for user = {}",
                 startDate, endDate, startTime, endTime, userId);
+        startDate = startDate != null ? startDate : TimeUtil.MIN_DATE;
+        endDate = endDate != null ? endDate : TimeUtil.MAX_DATE;
+        startTime = startTime != null ? startTime : LocalTime.MIN;
+        endTime = endTime != null ? endTime : LocalTime.MAX;
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
 
-        List<Meal> mealsDateFiltered = service.getBetweenDates(
-                startDate != null ? startDate : TimeUtil.MIN_DATE,
-                endDate != null ? endDate : TimeUtil.MAX_DATE, userId);
-
-        return MealsUtil.getFilteredWithExcess(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay(),
-                startTime != null ? startTime : LocalTime.MIN,
-                endTime != null ? endTime : LocalTime.MAX);
+        List<Meal> mealsDateFiltered = service.getBetweenDateTimes(startDateTime, endDateTime, userId);
+        return MealsUtil.getWithExcess(mealsDateFiltered, SecurityUtil.authUserCaloriesPerDay());
     }
 
 }
