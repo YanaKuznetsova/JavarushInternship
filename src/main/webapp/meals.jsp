@@ -8,7 +8,6 @@
     .normal {
         color: green;
     }
-
     .excess {
         color: red;
     }
@@ -31,7 +30,7 @@
     </tr>
     <c:forEach items="${mealsList}" var="meal">
         <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealTo"/>
-        <tr class="${meal.exceed ? 'exceeded' : 'normal'}">
+        <tr class="${meal.exceed ? 'excess' : 'normal'}">
             <td>${meal.id}</td>
             <td>${fn:formatDateTime(meal.dateTime)}</td>
             <td>${meal.description}</td>
