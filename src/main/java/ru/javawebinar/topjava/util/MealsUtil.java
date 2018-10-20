@@ -41,8 +41,8 @@ public class MealsUtil {
                 meal.getId(), exceeded);
     }
 
-    public static List<MealTo> getWithExcess(Collection<Meal> mealsList) {
-        return getFilteredWithExcess(mealsList, DEFAULT_CALORIES_PER_DAY, meal -> true);
+    public static List<MealTo> getWithExcess(Collection<Meal> mealsList, int caloriesPerDay) {
+        return getFilteredWithExcess(mealsList, caloriesPerDay, meal -> true);
     }
 
     public static List<MealTo> getFilteredWithExcess(Collection<Meal> meals, int caloriesPerDay,
