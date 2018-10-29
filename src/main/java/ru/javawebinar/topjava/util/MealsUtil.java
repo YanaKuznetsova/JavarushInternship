@@ -17,6 +17,9 @@ public class MealsUtil {
 
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
+    private MealsUtil() {
+    }
+
     public static MealTo convertToExcess(Meal meal, boolean exceeded) {
         return new MealTo(meal.getDateTime(), meal.getDescription(), meal.getCalories(),
                 meal.getId(), exceeded);
