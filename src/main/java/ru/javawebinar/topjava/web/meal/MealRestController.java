@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.Util.orElse;
+
 @Controller
 public class MealRestController {
 
@@ -63,10 +65,10 @@ public class MealRestController {
         int userId = SecurityUtil.authUserId();
         log.info("getBetween dates {} - {} and times {} - {} for user = {}",
                 startDate, endDate, startTime, endTime, userId);
-        startDate = startDate != null ? startDate : TimeUtil.MIN_DATE;
-        endDate = endDate != null ? endDate : TimeUtil.MAX_DATE;
-        startTime = startTime != null ? startTime : LocalTime.MIN;
-        endTime = endTime != null ? endTime : LocalTime.MAX;
+        startDate = orElse(startDate, TimeUtil.MIN_DATE);
+        endDate = orElse(endDate, TimeUtil.MAX_DATE);
+        startTime = orElse(startTime, LocalTime.MIN);
+        endTime = orElse(endTime, LocalTime.MAX);
         LocalDateTime startDateTime = LocalDateTime.of(startDate, startTime);
         LocalDateTime endDateTime = LocalDateTime.of(endDate, endTime);
 
