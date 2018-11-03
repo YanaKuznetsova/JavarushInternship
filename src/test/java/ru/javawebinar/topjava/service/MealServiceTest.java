@@ -4,7 +4,7 @@ import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.rules.TestWatcher;
+import org.junit.rules.Stopwatch;
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -18,14 +18,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
@@ -46,32 +43,25 @@ public class MealServiceTest {
     }
 
     private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
-    private static Map<String, String> testTimeMap = new HashMap();
-
+    private static StringBuilder results = new StringBuilder();
     @Rule
-    public TestWatcher watcher = new TestWatcher() {
-
+    // http://stackoverflow.com/questions/14892125/what-is-the-best-practice-to-determine-the-execution-time-of-the-bussiness-relev
+    public Stopwatch stopwatch = new Stopwatch() {
         @Override
-        protected void starting(Description description) {
-            testTimeMap.put(description.getMethodName(), LocalTime.now().toString());
-        }
-
-        @Override
-        protected void finished(Description description) {
-            String methodName = description.getMethodName();
-            Duration duration = Duration.between(LocalTime.parse(testTimeMap.get(methodName)), LocalTime.now());
-            String result = String.valueOf(duration.getNano() / 1_000_000);
-            testTimeMap.put(methodName, result);
-            log.info("Test: {}; duration: {} ms.", methodName, result);
+        protected void finished(long nanos, Description description) {
+            String result = String.format("\n%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
+            results.append(result);
+            log.info(result + " ms\n");
         }
     };
 
     @AfterClass
     public static void testSummary() {
-        System.out.println("MealServiceTest Summary");
-        for (Map.Entry<String, String> entry : testTimeMap.entrySet()) {
-            System.out.println(String.format("Test: %s; \t duration: %s ms.", entry.getKey(), entry.getValue()));
-        }
+        log.info("\n---------------------------------" +
+                "\nTest                 Duration, ms" +
+                "\n---------------------------------" +
+                results +
+                "\n---------------------------------");
     }
 
     @Rule
