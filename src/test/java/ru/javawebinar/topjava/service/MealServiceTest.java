@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class MealServiceTest {
         SLF4JBridgeHandler.install();
     }
 
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+
     @Autowired
     private MealService service;
 
@@ -52,8 +57,10 @@ public class MealServiceTest {
         assertMatch(service.get(ADMIN_MEAL_ID, ADMIN_ID), updated);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void updateUnauthorizedMeal() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
         Meal updated = createNewMeal();
         updated.setId(ADMIN_MEAL_ID);
         service.update(updated, USER_ID);
@@ -65,8 +72,10 @@ public class MealServiceTest {
         assertMatch(meal, ADMIN_MEAL_0);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void getUnauthorizedMeal() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
         service.get(ADMIN_MEAL_ID, USER_ID);
     }
 
@@ -76,13 +85,17 @@ public class MealServiceTest {
         assertMatch(service.getAll(ADMIN_ID), ADMIN_MEAL_2, ADMIN_MEAL_1);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteUnauthorizedMeal() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
         service.delete(ADMIN_MEAL_ID, USER_ID);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteNonexistentMeal() {
+        exception.expect(NotFoundException.class);
+        exception.expectMessage("Not found entity with id=1");
         service.delete(1, USER_ID);
     }
 
