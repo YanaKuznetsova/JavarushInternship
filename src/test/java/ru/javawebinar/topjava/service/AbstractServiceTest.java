@@ -34,7 +34,7 @@ public abstract class AbstractServiceTest {
     public Stopwatch stopwatch = TimingRules.STOPWATCH;
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public ExpectedException exception = ExpectedException.none();
 
     static {
         // needed only for java.util.logging (postgres driver)
