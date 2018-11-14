@@ -5,11 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.time.LocalDateTime.of;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -86,6 +88,18 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         List<Meal> actual = service.getBetweenDates(LocalDate.of(2015, Month.MAY, 20),
                 LocalDate.of(2015, Month.MAY, 30), USER_ID);
         assertMatch(actual, Arrays.asList(USER_MEAL_2, USER_MEAL_1, USER_MEAL_0));
+    }
+
+    @Test
+    public void testValidation() throws Exception {
+        validateRootCause(() -> service.create(new Meal(of(2015, Month.JUNE, 1, 18, 0),
+                "  ", 300, null), USER_ID), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Meal(null, "Description", 300,
+                null), USER_ID), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Meal(of(2015, Month.JUNE, 1, 18, 0),
+                "Description", 9, null), USER_ID), ConstraintViolationException.class);
+        validateRootCause(() -> service.create(new Meal(of(2015, Month.JUNE, 1, 18, 0),
+                "Description", 10001, null), USER_ID), ConstraintViolationException.class);
     }
 
 }
