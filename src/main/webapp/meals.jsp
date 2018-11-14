@@ -3,11 +3,18 @@
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
+<fmt:setBundle basename="messages.app"/>
+
 <html>
+<jsp:include page="fragments/headTag.jsp"/>
+<body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
+
 <style>
     .normal {
         color: green;
     }
+
     .excess {
         color: red;
     }
@@ -63,4 +70,5 @@
 <p><a href="meals?action=insert">Add Meal</a></p>
 
 </body>
+<jsp:include page="fragments/footer.jsp"/>
 </html>
