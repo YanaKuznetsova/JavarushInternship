@@ -62,9 +62,7 @@ public abstract class AbstractServiceTest {
     public <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> exceptionClass) {
         try {
             runnable.run();
-            System.out.println("_____________1__" + exceptionClass.getName());
             Assert.fail("Expected " + exceptionClass.getName());
-            System.out.println("_____________2__" + exceptionClass.getName());
         } catch (Exception e) {
             Assert.assertThat(getRootCause(e), instanceOf(exceptionClass));
         }
