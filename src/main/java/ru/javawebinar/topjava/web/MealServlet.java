@@ -2,9 +2,8 @@ package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.javawebinar.topjava.Profiles;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.TimeUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
@@ -26,24 +25,14 @@ public class MealServlet extends HttpServlet {
     private static final String INSERT_OR_EDIT = "/editMeal.jsp";
     private static final String LIST_MEAL = "/meals.jsp";
 
-    private ConfigurableApplicationContext springApplicationContext;
     private MealRestController mealController;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        springApplicationContext = new ClassPathXmlApplicationContext(
-                new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, false);
-        springApplicationContext.getEnvironment().setActiveProfiles(Profiles.getActiveDbProfile(),
-                Profiles.REPOSITORY_IMPLEMENTATION);
-        springApplicationContext.refresh();
+        WebApplicationContext springApplicationContext
+                = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
         mealController = springApplicationContext.getBean(MealRestController.class);
-    }
-
-    @Override
-    public void destroy() {
-        springApplicationContext.close();
-        super.destroy();
     }
 
     @Override
