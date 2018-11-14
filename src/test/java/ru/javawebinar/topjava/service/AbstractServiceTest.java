@@ -18,6 +18,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
+import ru.javawebinar.topjava.repository.JpaUtil;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
@@ -48,9 +49,13 @@ public abstract class AbstractServiceTest {
     @Autowired
     private CacheManager cacheManager;
 
+    @Autowired
+    protected JpaUtil jpaUtil;
+
     @Before
     public void setUp() throws Exception {
         cacheManager.getCache("users").clear();
+        jpaUtil.clear2ndLevelHibernateCache();
     }
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
