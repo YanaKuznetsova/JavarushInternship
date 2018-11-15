@@ -1,7 +1,6 @@
 package ru.javawebinar.topjava.service;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -10,7 +9,7 @@ import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -18,7 +17,6 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.TimingRules;
-import ru.javawebinar.topjava.repository.JpaUtil;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
@@ -41,21 +39,12 @@ public abstract class AbstractServiceTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
+    @Autowired
+    Environment environment;
+
     static {
         // needed only for java.util.logging (postgres driver)
         SLF4JBridgeHandler.install();
-    }
-
-    @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired
-    protected JpaUtil jpaUtil;
-
-    @Before
-    public void setUp() throws Exception {
-        cacheManager.getCache("users").clear();
-        jpaUtil.clear2ndLevelHibernateCache();
     }
 
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
@@ -66,6 +55,17 @@ public abstract class AbstractServiceTest {
         } catch (Exception e) {
             Assert.assertThat(getRootCause(e), instanceOf(exceptionClass));
         }
+    }
+
+    static boolean isActiveProfile(Environment environment, String profile) {
+        String[] activeProfiles = environment.getActiveProfiles();
+        boolean result = false;
+        for (String currentProfile : activeProfiles) {
+            if (profile.equalsIgnoreCase(currentProfile)) {
+                result = true;
+            }
+        }
+        return result;
     }
 
 }
