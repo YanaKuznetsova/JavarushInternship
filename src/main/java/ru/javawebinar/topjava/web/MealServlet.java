@@ -22,7 +22,7 @@ import java.time.LocalTime;
 public class MealServlet extends HttpServlet {
 
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
-    private static final String INSERT_OR_EDIT = "/editMeal.jsp";
+    private static final String INSERT_OR_EDIT = "/mealForm.jsp";
     private static final String LIST_MEAL = "/meals.jsp";
 
     private MealRestController mealController;

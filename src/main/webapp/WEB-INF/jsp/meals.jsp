@@ -29,7 +29,7 @@
 <h2>Meals</h2>
 
 <table>
-    <form method="POST" action="meals?action=filter" name="filterMealsByDate">
+    <form method="POST" action="${pageContext.request.contextPath}/meals/filter" name="filterMealsByDate">
         <tr>
             <td>From date:</td>
             <td><input type="date" name="startDate" value="${param.startDate}"></td>
@@ -62,12 +62,12 @@
             <td>${fn:formatDateTime(meal.dateTime)}</td>
             <td>${meal.description}</td>
             <td>${meal.calories}</td>
-            <td><a href="meals?action=edit&id=<c:out value="${meal.id}"/>">Update</a></td>
-            <td><a href="meals?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
+            <td><a href="${pageContext.request.contextPath}/meals/edit/<c:out value="${meal.id}"/>">Edit</a></td>
+            <td><a href="${pageContext.request.contextPath}/meals/delete/<c:out value="${meal.id}"/>">Delete</a></td>
         </tr>
     </c:forEach>
 </table>
-<p><a href="meals?action=insert">Add Meal</a></p>
+<p><a href="${pageContext.request.contextPath}/meals/add">Add Meal</a></p>
 
 </body>
 <jsp:include page="fragments/footer.jsp"/>
