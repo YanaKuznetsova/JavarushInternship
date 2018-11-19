@@ -17,6 +17,9 @@ public class UserTestData {
 
     public static void assertMatch(User actual, User expected) {
         assertThat(actual).isEqualToIgnoringGivenFields(expected, "registered", "roles", "meals");
+        if (actual.getRoles().contains(Role.ROLE_ADMIN)) {
+            assertThat(actual.getRoles().contains(Role.ROLE_USER));
+        }
     }
 
     public static void assertMatch(Iterable<User> actual, User... expected) {

@@ -5,10 +5,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFound;
@@ -28,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         Assert.notNull(user, "user must not be null");
+        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
+            user.setRoles(Arrays.asList(Role.ROLE_USER, Role.ROLE_ADMIN));
+        }
         return repository.save(user);
     }
 
@@ -58,6 +63,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
+        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
+            user.setRoles(Arrays.asList(Role.ROLE_USER, Role.ROLE_ADMIN));
+        }
         checkNotFoundWithId(repository.save(user), user.getId());
     }
 
