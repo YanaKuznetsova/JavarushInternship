@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.service;
 import org.junit.Assume;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -40,8 +39,8 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void updateUnauthorizedMeal() {
-        exception.expect(NotFoundException.class);
-        exception.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
         Meal updated = createNewMeal();
         updated.setId(ADMIN_MEAL_ID);
         service.update(updated, USER_ID);
@@ -55,8 +54,8 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void getUnauthorizedMeal() {
-        exception.expect(NotFoundException.class);
-        exception.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
         service.get(ADMIN_MEAL_ID, USER_ID);
     }
 
@@ -68,15 +67,15 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void deleteUnauthorizedMeal() {
-        exception.expect(NotFoundException.class);
-        exception.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity with id=" + ADMIN_MEAL_ID);
         service.delete(ADMIN_MEAL_ID, USER_ID);
     }
 
     @Test
     public void deleteNonexistentMeal() {
-        exception.expect(NotFoundException.class);
-        exception.expectMessage("Not found entity with id=1");
+        thrown.expect(NotFoundException.class);
+        thrown.expectMessage("Not found entity with id=1");
         service.delete(1, USER_ID);
     }
 
@@ -94,7 +93,7 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     public void testValidation() throws Exception {
-        Assume.assumeFalse(isActiveProfile(environment, Profiles.JDBC));
+        Assume.assumeTrue(isJpaBased());
         validateRootCause(() -> service.create(new Meal(of(2015, Month.JUNE, 1, 18, 0),
                 "  ", 300, null), USER_ID), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new Meal(null, "Description", 300,

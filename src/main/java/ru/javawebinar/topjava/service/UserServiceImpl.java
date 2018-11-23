@@ -30,9 +30,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         Assert.notNull(user, "user must not be null");
-        if (user.getRoles().contains(Role.ROLE_ADMIN)) {
-            user.setRoles(Arrays.asList(Role.ROLE_USER, Role.ROLE_ADMIN));
-        }
         return repository.save(user);
     }
 
