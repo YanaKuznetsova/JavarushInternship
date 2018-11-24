@@ -26,4 +26,22 @@ class RootControllerTest extends AbstractControllerTest {
                         )
                 )));
     }
+
+    @Test
+    void testMeals() throws Exception {
+        mockMvc.perform(get("/meals"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(view().name("meals"))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
+                .andExpect(model().attribute("mealsList", hasSize(7)))
+//                .andExpect(model().attribute("mealsList", hasItem(
+//                        allOf(
+//                                hasProperty("")
+//                        )
+//                )));
+        ;
+    }
+
+
 }
