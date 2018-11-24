@@ -5,5 +5,5 @@ import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.service.AbstractMealServiceTest;
 
 @ActiveProfiles(Profiles.JDBC)
-public class JdbcMealServiceTest extends AbstractMealServiceTest {
+class JdbcMealServiceTest extends AbstractMealServiceTest {
 }
