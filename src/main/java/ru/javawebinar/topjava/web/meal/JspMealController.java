@@ -4,7 +4,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.TimeUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,16 +13,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
+import static ru.javawebinar.topjava.util.TimeUtil.parseLocalDate;
+import static ru.javawebinar.topjava.util.TimeUtil.parseLocalTime;
+
 @Controller
 @RequestMapping(value = "/meals")
 public class JspMealController extends AbstractMealController {
 
     private static final String INSERT_OR_EDIT = "mealForm";
     private static final String LIST_MEAL = "redirect:/meals";
-
-    public JspMealController(MealService service) {
-        super(service);
-    }
 
     @GetMapping(value = "/delete/{id}")
     public String deleteMeal(Model model, @PathVariable int id) {
@@ -46,10 +44,10 @@ public class JspMealController extends AbstractMealController {
 
     @PostMapping(value = "/filter")
     public String filter(Model model, @ModelAttribute Meal meal, HttpServletRequest request) throws UnsupportedEncodingException {
-        LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
-        LocalTime startTime = LocalTime.parse(request.getParameter("startTime"));
-        LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
-        LocalTime endTime = LocalTime.parse(request.getParameter("endTime"));
+        LocalDate startDate = parseLocalDate(request.getParameter("startDate"));
+        LocalTime startTime = parseLocalTime(request.getParameter("startTime"));
+        LocalDate endDate = parseLocalDate(request.getParameter("endDate"));
+        LocalTime endTime = parseLocalTime(request.getParameter("endTime"));
         request.setAttribute("mealsList", getBetween(startDate, startTime, endDate, endTime));
         return "meals";
     }
