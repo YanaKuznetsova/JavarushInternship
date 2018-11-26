@@ -22,13 +22,9 @@ import static ru.javawebinar.topjava.util.Util.orElse;
 @Controller
 public class AbstractMealController {
 
+    @Autowired
     private MealService service;
     private static final Logger log = LoggerFactory.getLogger(ru.javawebinar.topjava.web.meal.MealRestController.class);
-
-    @Autowired
-    public AbstractMealController(MealService service) {
-        this.service = service;
-    }
 
     public Meal create(Meal meal) {
         int userId = SecurityUtil.authUserId();
