@@ -18,8 +18,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.TestUtil.readFromJson;
+import static ru.javawebinar.topjava.TestUtil.readFromJsonMvcResult;
+import static ru.javawebinar.topjava.TestUtil.readFromJsonResultActions;
+import static ru.javawebinar.topjava.UserTestData.USER;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.util.MealsUtil.convertToExcess;
+import static ru.javawebinar.topjava.util.MealsUtil.getWithExcess;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
@@ -34,7 +38,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(contentJson(USER_MEAL_0));
+                .andExpect(result -> assertMatch(readFromJsonMvcResult(result, Meal.class), USER_MEAL_0));
     }
 
     @Test
@@ -43,8 +47,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(contentJson(USER_MEAL_6, USER_MEAL_5, USER_MEAL_4, USER_MEAL_3,
-                        USER_MEAL_2, USER_MEAL_1, USER_MEAL_0));
+                .andExpect(getToMatcher(getWithExcess(USER_MEALS, USER.getCaloriesPerDay())));
     }
 
     @Test
@@ -55,7 +58,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(expected)))
                 .andExpect(status().isCreated());
 
-        Meal returned = readFromJson(action, Meal.class);
+        Meal returned = readFromJsonResultActions(action, Meal.class);
         expected.setId(returned.getId());
 
         assertMatch(returned, expected);
@@ -101,8 +104,11 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
-                .andExpect(contentJson(USER_MEAL_4, USER_MEAL_3,
-                        USER_MEAL_2, USER_MEAL_1, USER_MEAL_0));
+                .andExpect(getToMatcher(convertToExcess(USER_MEAL_4, false),
+                        convertToExcess(USER_MEAL_3, false),
+                        convertToExcess(USER_MEAL_2, false),
+                        convertToExcess(USER_MEAL_1, false),
+                        convertToExcess(USER_MEAL_0, false)));
     }
 
 }
