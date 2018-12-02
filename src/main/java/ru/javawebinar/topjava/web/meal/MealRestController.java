@@ -55,12 +55,21 @@ public class MealRestController extends AbstractMealController {
         super.delete(id);
     }
 
-    @Override
     @PostMapping(value = "/filter", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public List<MealTo> getBetween(@RequestParam(required = false) LocalDate startDate,
-                                   @RequestParam(required = false) LocalTime startTime,
-                                   @RequestParam(required = false) LocalDate endDate,
-                                   @RequestParam(required = false) LocalTime endTime) {
+    public List<MealTo> filter(@RequestParam(required = false) LocalDate startDate,
+                               @RequestParam(required = false) LocalTime startTime,
+                               @RequestParam(required = false) LocalDate endDate,
+                               @RequestParam(required = false) LocalTime endTime) {
+        return super.getBetween(startDate, startTime, endDate, endTime);
+    }
+
+    @Override
+    @GetMapping(value = "/filter")
+    public List<MealTo> getBetween(
+            @RequestParam(value = "startDate", required = false) LocalDate startDate,
+            @RequestParam(value = "startTime", required = false) LocalTime startTime,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "endTime", required = false) LocalTime endTime) {
         return super.getBetween(startDate, startTime, endDate, endTime);
     }
 
