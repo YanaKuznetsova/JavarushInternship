@@ -2,21 +2,25 @@ package ru.javawebinar.topjava.to;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class MealTo {
 
-    private final LocalDateTime dateTime;
-    private final String description;
-    private final int calories;
-    private final boolean exceed;
-    private final Integer id;
+    private LocalDateTime dateTime;
+    private String description;
+    private int calories;
+    private boolean excess;
+    private Integer id;
 
     public MealTo(LocalDateTime dateTime, String description, int calories, Integer id, boolean exceed) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
-        this.exceed = exceed;
+        this.excess = exceed;
         this.id = id;
+    }
+
+    public MealTo() {
     }
 
     @Override
@@ -25,7 +29,7 @@ public class MealTo {
                 "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
-                ", exceed=" + exceed +
+                ", excess=" + excess +
                 ", id=" + id +
                 '}';
     }
@@ -46,12 +50,29 @@ public class MealTo {
         return calories;
     }
 
-    public boolean isExceed() {
-        return exceed;
+    public boolean isExcess() {
+        return excess;
     }
 
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MealTo that = (MealTo) o;
+        return calories == that.calories &&
+                excess == that.excess &&
+                Objects.equals(id, that.id) &&
+                Objects.equals(dateTime, that.dateTime) &&
+                Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, dateTime, description, calories, excess);
     }
 
 }
