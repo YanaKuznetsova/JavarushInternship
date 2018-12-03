@@ -5,6 +5,10 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <import resource="spring-tools.xml"/>
+    <import resource="spring-security.xml"/>
+
+    <!-- Not necessary, already included with component-scan -->
+    <!--<context:annotation-config/>-->
 
     <context:component-scan base-package="ru.javawebinar.**.service"/>
 
