@@ -61,13 +61,13 @@
             <c:forEach items="${mealsList}" var="meal">
                 <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealTo"/>
 
-                <tr class="${meal.excess ? 'excess' : 'normal'}">
+                <tr id=${meal.id} class="${meal.excess ? 'excess' : 'normal'}">
                     <td>${fn:formatDateTime(meal.dateTime)}</td>
                     <td>${meal.description}</td>
                     <td>${meal.calories}</td>
 
                     <td><a href="meals/edit/<c:out value="${meal.id}"/>"><span class="fa fa-pencil"></span></a></td>
-                    <td><a href="meals/delete/<c:out value="${meal.id}"/>"><span class="fa fa-remove"></span></a></td>
+                    <td><a class="delete"><span class="fa fa-remove"></span></a></td>
 
                 </tr>
             </c:forEach>
