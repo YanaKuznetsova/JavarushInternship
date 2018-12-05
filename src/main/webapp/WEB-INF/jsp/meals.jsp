@@ -4,16 +4,6 @@
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <html>
 
-<style>
-    .normal {
-        color: green;
-    }
-
-    .excess {
-        color: red;
-    }
-</style>
-
 <jsp:include page="fragments/headTag.jsp"/>
 <body>
 <script type="text/javascript" src="resources/js/topjava.common.js" defer></script>
@@ -27,25 +17,36 @@
 
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
 
-        <table>
-            <form method="post" action="meals/filter">
-                <tr>
-                    <td>From date:</td>
-                    <td><input type="date" name="startDate" value="${param.startDate}"></td>
-                    <td>From time:</td>
-                    <td><input type="time" name="startTime" value="${param.startTime}"></td>
-                </tr>
-                <tr>
-                    <td>To date:</td>
-                    <td><input type="date" name="endDate" value="${param.endDate}"></td>
-                    <td>To time:</td>
-                    <td><input type="time" name="endTime" value="${param.endTime}"></td>
-                </tr>
-                <tr>
-                    <button type="submit"><spring:message code="meal.filter"/></button>
-                </tr>
-            </form>
-        </table>
+        <div class="row">
+            <table>
+                <form class="fa-filter" id="filter">
+                    <tr>
+                        <td>From date:</td>
+                        <td><input type="date" name="startDate" value="${param.startDate}"></td>
+                        <td>From time:</td>
+                        <td><input type="time" name="startTime" value="${param.startTime}"></td>
+                    </tr>
+                    <tr>
+                        <td>To date:</td>
+                        <td><input type="date" name="endDate" value="${param.endDate}"></td>
+                        <td>To time:</td>
+                        <td><input type="time" name="endTime" value="${param.endTime}"></td>
+                    </tr>
+                    <tr>
+                        <div class="panel-footer text-right">
+                            <a class="btn btn-danger" type="button" onclick="clearFilter()">
+                                <span class="fa fa-remove" aria-hidden="true"></span>
+                                <spring:message code="common.cancel"/>
+                            </a>
+                            <a class="btn btn-primary" type="button" onclick="updateTable()">
+                                <span class="fa fa-filter" aria-hidden="true"></span>
+                                <spring:message code="meal.filter"/>
+                            </a>
+                        </div>
+                    </tr>
+                </form>
+            </table>
+        </div>
 
         <table class="table table-striped" id="datatable">
             <thead>
@@ -61,7 +62,7 @@
             <c:forEach items="${mealsList}" var="meal">
                 <jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealTo"/>
 
-                <tr id=${meal.id} class="${meal.excess ? 'excess' : 'normal'}">
+                <tr data-mealExcess="${meal.excess}">
                     <td>${fn:formatDateTime(meal.dateTime)}</td>
                     <td>${meal.description}</td>
                     <td>${meal.calories}</td>
@@ -72,10 +73,6 @@
                 </tr>
             </c:forEach>
         </table>
-
-        <%--<hr>--%>
-        <%--<a href="meals/add"><spring:message code="meal.add"/></a>--%>
-        <%--<hr>--%>
 
         <button class="btn btn-primary" onclick="add()">
             <span class="fa fa-plus"></span>

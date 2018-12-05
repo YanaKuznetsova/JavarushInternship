@@ -1,9 +1,28 @@
 const ajaxUrl = "ajax/profile/meals/";
 let datatableApi;
 
+function updateTable() {
+    $.ajax({
+        type: "POST",
+        url: ajaxUrl + "filter",
+        data: $("#filter").serialize(),
+        success: updateTableWithData
+    });
+    return false;
+}
+
+function clearFilter() {
+    $("#filter")[0].reset();
+    $.get(ajaxUrl, updateTableWithData);
+}
+
 // $(document).ready(function () {
 $(function () {
     datatableApi = $("#datatable").DataTable({
+        "ajax": {
+            "url": ajaxUrl,
+            "dataSrc": ""
+        },
         "paging": false,
         "info": true,
         "columns": [
@@ -32,5 +51,8 @@ $(function () {
             ]
         ]
     });
-    makeEditable();
+    $("#filter").submit(function () {
+        updateTable()
+        return false;
+    });
 });
