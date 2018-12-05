@@ -1,6 +1,9 @@
+let form;
+
 function makeEditable() {
+    form = $('#detailsForm');
     $(".delete").click(function () {
-        var id = $(this).parent().parent().attr("id");
+        let id = $(this).parent().parent().attr("id");
         deleteRow(id);
     });
 
@@ -13,7 +16,7 @@ function makeEditable() {
 }
 
 function add() {
-    $("#detailsForm").find(":input").val("");
+    form.find(":input").val("");
     $("#editRow").modal();
 }
 
@@ -27,14 +30,11 @@ function deleteRow(id) {
     });
 }
 
-function updateTable() {
-    $.get(ajaxUrl, function (data) {
-        datatableApi.clear().rows.add(data).draw();
-    });
+function updateTableWithData(data) {
+    datatableApi.clear().rows.add(data).draw();
 }
 
 function save() {
-    let form = $("#detailsForm");
     $.ajax({
         type: "POST",
         url: ajaxUrl,
