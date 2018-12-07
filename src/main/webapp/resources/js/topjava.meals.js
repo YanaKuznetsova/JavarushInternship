@@ -1,58 +1,50 @@
 const ajaxUrl = "ajax/profile/meals/";
-let datatableApi;
 
-function updateTable() {
+function updateFilteredTable() {
     $.ajax({
-        type: "POST",
+        type: "GET",
         url: ajaxUrl + "filter",
         data: $("#filter").serialize(),
-        success: updateTableWithData
-    });
-    return false;
+    }).done(updateTableByData);
 }
 
 function clearFilter() {
     $("#filter")[0].reset();
-    $.get(ajaxUrl, updateTableWithData);
+    $.get(ajaxUrl, updateTableByData);
 }
 
-// $(document).ready(function () {
 $(function () {
-    datatableApi = $("#datatable").DataTable({
-        "ajax": {
-            "url": ajaxUrl,
-            "dataSrc": ""
-        },
-        "paging": false,
-        "info": true,
-        "columns": [
-            {
-                "data": "dateTime"
-            },
-            {
-                "data": "description"
-            },
-            {
-                "data": "calories"
-            },
-            {
-                "defaultContent": "Edit",
-                "orderable": false
-            },
-            {
-                "defaultContent": "Delete",
-                "orderable": false
-            }
-        ],
-        "order": [
-            [
-                0,
-                "desc"
-            ]
-        ]
-    });
-    $("#filter").submit(function () {
-        updateTable()
-        return false;
+    makeEditable({
+        ajaxUrl: ajaxUrl,
+        datatableApi: $("#datatable").DataTable({
+            "paging": false,
+            "info": true,
+            "columns": [
+                {
+                    "data": "dateTime"
+                },
+                {
+                    "data": "description"
+                },
+                {
+                    "data": "calories"
+                },
+                {
+                    "defaultContent": "Edit",
+                    "orderable": false
+                },
+                {
+                    "defaultContent": "Delete",
+                    "orderable": false
+                }
+            ],
+            "order": [
+                [
+                    0,
+                    "desc"
+                ]
+            ],
+        }),
+        updateTable: updateFilteredTable
     });
 });
