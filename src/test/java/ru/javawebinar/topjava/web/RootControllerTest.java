@@ -9,13 +9,17 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static ru.javawebinar.topjava.MealTestData.USER_MEALS;
+import static ru.javawebinar.topjava.TestUtil.userAuth;
 import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.util.MealsUtil.getWithExcess;
 
 class RootControllerTest extends AbstractControllerTest {
 
     @Test
     void testUsers() throws Exception {
-        mockMvc.perform(get("/users"))
+        mockMvc.perform(get("/users")
+                .with(userAuth(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("users"))
@@ -28,6 +32,24 @@ class RootControllerTest extends AbstractControllerTest {
                             }
                         }
                 ));
+    }
+
+    @Test
+    void testUnAuth() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost/login"));
+    }
+
+    @Test
+    void testMeals() throws Exception {
+        mockMvc.perform(get("/meals")
+                .with(userAuth(USER)))
+                .andDo(print())
+                .andExpect(view().name("meals"))
+                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
+                .andExpect(model().attribute("meals", getWithExcess(USER_MEALS, SecurityUtil.authUserCaloriesPerDay())));
     }
 
 }
