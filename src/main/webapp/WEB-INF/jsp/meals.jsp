@@ -17,36 +17,42 @@
 
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
 
-        <div class="row">
-            <table>
-                <form class="fa-filter" id="filter">
-                    <tr>
-                        <td>From date:</td>
-                        <td><input type="date" name="startDate" value="${param.startDate}"></td>
-                        <td>From time:</td>
-                        <td><input type="time" name="startTime" value="${param.startTime}"></td>
-                    </tr>
-                    <tr>
-                        <td>To date:</td>
-                        <td><input type="date" name="endDate" value="${param.endDate}"></td>
-                        <td>To time:</td>
-                        <td><input type="time" name="endTime" value="${param.endTime}"></td>
-                    </tr>
-                    <tr>
-                        <div class="panel-footer text-right">
-                            <a class="btn btn-danger" type="button" onclick="clearFilter()">
-                                <span class="fa fa-remove" aria-hidden="true"></span>
-                                <spring:message code="common.cancel"/>
-                            </a>
-                            <a class="btn btn-primary" type="button" onclick="updateTable()">
-                                <span class="fa fa-filter" aria-hidden="true"></span>
-                                <spring:message code="meal.filter"/>
-                            </a>
+        <div class="card border-dark">
+            <div class="card-body pb-0">
+                <form id="filter">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="startDate"><spring:message code="meal.startDate"/></label>
+                            <input class="form-control" type="date" name="startDate" id="startDate">
                         </div>
-                    </tr>
+                        <div class="col-2">
+                            <label for="startTime"><spring:message code="meal.startTime"/></label>
+                            <input class="form-control" type="time" name="startTime" id="startTime">
+                        </div>
+
+                        <div class="offset-1 col-3">
+                            <label for="endDate"><spring:message code="meal.endDate"/></label>
+                            <input class="form-control" type="date" name="endDate" id="endDate">
+                        </div>
+                        <div class="col-2">
+                            <label for="endTime"><spring:message code="meal.endTime"/></label>
+                            <input class="form-control" type="time" name="endTime" id="endTime">
+                        </div>
+                        </div>
                 </form>
-            </table>
+            </div>
+            <div class="card-footer text-right">
+                <button class="btn btn-primary" onclick="updateFilteredTable()">
+                    <span class="fa fa-filter"></span>
+                    <spring:message code="meal.filter"/>
+                </button>
+                <button class="btn btn-danger" onclick="clearFilter()">
+                    <span class="fa fa-filter"></span>
+                    <spring:message code="common.cancel"/>
+                </button>
+            </div>
         </div>
+        <br/>
 
         <table class="table table-striped" id="datatable">
             <thead>
@@ -127,7 +133,7 @@
     </div>
 </div>
 
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 
-<jsp:include page="fragments/footer.jsp"/>
 </html>
