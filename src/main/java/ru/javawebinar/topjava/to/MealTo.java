@@ -4,20 +4,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class MealTo {
+public class MealTo extends BaseTo {
 
     private LocalDateTime dateTime;
     private String description;
     private int calories;
     private boolean excess;
-    private Integer id;
 
     public MealTo(LocalDateTime dateTime, String description, int calories, Integer id, boolean exceed) {
+        super(id);
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = exceed;
-        this.id = id;
     }
 
     public MealTo() {
@@ -52,10 +51,6 @@ public class MealTo {
 
     public boolean isExcess() {
         return excess;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     @Override
