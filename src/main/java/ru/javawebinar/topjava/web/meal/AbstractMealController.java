@@ -39,6 +39,13 @@ public class AbstractMealController {
         service.update(meal, userId);
     }
 
+    public void update(MealTo mealTo, int id) {
+        int userId = SecurityUtil.authUserId();
+        ValidationUtil.assureIdConsistent(mealTo, id);
+        log.info("update meal = {} for user = {}", id, userId);
+        service.update(mealTo, userId);
+    }
+
     public void delete(int id) {
         int userId = SecurityUtil.authUserId();
         log.info("delete meal = {} for user = {}", id, userId);

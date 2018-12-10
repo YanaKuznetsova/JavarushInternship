@@ -50,4 +50,10 @@ public class MealsUtil {
                 .collect(toList());
     }
 
+    public static Meal updateFromTo(Meal meal, MealTo mealTo) {
+        meal.setDescription(mealTo.getDescription());
+        meal.setCalories(mealTo.getCalories());
+        meal.setDateTime(mealTo.getDateTime());
+        return meal;
+    }
 }

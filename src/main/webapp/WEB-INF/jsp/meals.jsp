@@ -73,8 +73,10 @@
                     <td>${meal.description}</td>
                     <td>${meal.calories}</td>
 
-                    <td><a href="meals/edit/<c:out value="${meal.id}"/>"><span class="fa fa-pencil"></span></a></td>
-                    <td><a class="delete"><span class="fa fa-remove"></span></a></td>
+                    <td><a onclick="updateRow(${meal.id})"><span class="fa fa-pencil"></span></a></td>
+                    <td><a onclick="deleteRow(${meal.id})"><span class="fa fa-remove"></span></a></td>
+                        <%--<td><a href="meals/edit/<c:out value="${meal.id}"/>"><span class="fa fa-pencil"></span></a></td>--%>
+                        <%--<td><a class="delete"><span class="fa fa-remove"></span></a></td>--%>
 
                 </tr>
             </c:forEach>
