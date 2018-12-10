@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class UserTo extends BaseTo implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -75,5 +76,22 @@ public class UserTo extends BaseTo implements Serializable {
                 ", email='" + email + '\'' +
                 ", caloriesPerDay='" + caloriesPerDay + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserTo)) return false;
+        UserTo userTo = (UserTo) o;
+        return Objects.equals(name, userTo.name) &&
+                Objects.equals(email, userTo.email) &&
+                Objects.equals(password, userTo.password) &&
+                Objects.equals(caloriesPerDay, userTo.caloriesPerDay);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(name, email, password, caloriesPerDay);
     }
 }
