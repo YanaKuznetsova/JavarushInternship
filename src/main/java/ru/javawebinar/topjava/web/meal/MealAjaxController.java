@@ -33,6 +33,7 @@ public class MealAjaxController extends AbstractMealController {
     }
 
     @PostMapping
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public ResponseEntity<String> createOrUpdate(@Valid MealTo mealTo, BindingResult result) {
         if (result.hasErrors()) {
             return ValidationUtil.getErrorResponse(result);
