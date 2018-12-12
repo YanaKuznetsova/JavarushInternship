@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static ru.javawebinar.topjava.MealTestData.USER_MEALS;
 import static ru.javawebinar.topjava.TestUtil.userAuth;
 import static ru.javawebinar.topjava.UserTestData.ADMIN;
 import static ru.javawebinar.topjava.UserTestData.USER;
-import static ru.javawebinar.topjava.util.MealsUtil.getWithExcess;
 
 class RootControllerTest extends AbstractControllerTest {
 
@@ -37,8 +35,8 @@ class RootControllerTest extends AbstractControllerTest {
                 .with(userAuth(USER)))
                 .andDo(print())
                 .andExpect(view().name("meals"))
-                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"))
-                .andExpect(model().attribute("meals", getWithExcess(USER_MEALS, SecurityUtil.authUserCaloriesPerDay())));
+                .andExpect(forwardedUrl("/WEB-INF/jsp/meals.jsp"));
+        //.andExpect(model().attribute("meals", getWithExcess(USER_MEALS, SecurityUtil.authUserCaloriesPerDay())));
     }
 
 }
