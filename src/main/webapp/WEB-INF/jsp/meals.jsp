@@ -23,22 +23,22 @@
                     <div class="row">
                         <div class="col-3">
                             <label for="startDate"><spring:message code="meal.startDate"/></label>
-                            <input class="form-control" type="date" name="startDate" id="startDate">
+                            <input class="form-control" name="startDate" id="startDate">
                         </div>
                         <div class="col-2">
                             <label for="startTime"><spring:message code="meal.startTime"/></label>
-                            <input class="form-control" type="time" name="startTime" id="startTime">
+                            <input class="form-control" name="startTime" id="startTime">
                         </div>
 
                         <div class="offset-1 col-3">
                             <label for="endDate"><spring:message code="meal.endDate"/></label>
-                            <input class="form-control" type="date" name="endDate" id="endDate">
+                            <input class="form-control" name="endDate" id="endDate">
                         </div>
                         <div class="col-2">
                             <label for="endTime"><spring:message code="meal.endTime"/></label>
-                            <input class="form-control" type="time" name="endTime" id="endTime">
+                            <input class="form-control" name="endTime" id="endTime">
                         </div>
-                        </div>
+                    </div>
                 </form>
             </div>
             <div class="card-footer text-right">
@@ -64,22 +64,6 @@
                 <th></th>
             </tr>
             </thead>
-
-            <%--<c:forEach items="${mealsList}" var="meal">--%>
-            <%--<jsp:useBean id="meal" scope="page" type="ru.javawebinar.topjava.to.MealTo"/>--%>
-
-            <%--<tr data-mealExcess="${meal.excess}">--%>
-            <%--<td>${fn:formatDateTime(meal.dateTime)}</td>--%>
-            <%--<td>${meal.description}</td>--%>
-            <%--<td>${meal.calories}</td>--%>
-
-            <%--<td><a onclick="updateRow(${meal.id})"><span class="fa fa-pencil"></span></a></td>--%>
-            <%--<td><a onclick="deleteRow(${meal.id})"><span class="fa fa-remove"></span></a></td>--%>
-            <%--&lt;%&ndash;<td><a href="meals/edit/<c:out value="${meal.id}"/>"><span class="fa fa-pencil"></span></a></td>&ndash;%&gt;--%>
-            <%--&lt;%&ndash;<td><a class="delete"><span class="fa fa-remove"></span></a></td>&ndash;%&gt;--%>
-
-            <%--</tr>--%>
-            <%--</c:forEach>--%>
         </table>
 
         <button class="btn btn-primary" onclick="add()">
@@ -103,7 +87,7 @@
 
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
-                        <input type="datetime-local" class="form-control" id="dateTime" name="dateTime"
+                        <input class="form-control" id="dateTime" name="dateTime"
                                placeholder="<spring:message code="meal.dateTime"/>">
                     </div>
 

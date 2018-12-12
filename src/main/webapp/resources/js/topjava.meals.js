@@ -13,6 +13,19 @@ function clearFilter() {
     $.get(mealAjaxUrl, updateTableByData);
 }
 
+// http://api.jquery.com/jQuery.ajax/#using-converters
+$.ajaxSetup({
+    converters: {
+        "text json": function (stringData) {
+            const json = JSON.parse(stringData);
+            $(json).each(function () {
+                this.dateTime = formatDate(this.dateTime)
+            });
+            return json;
+        }
+    }
+});
+
 $(function () {
     makeEditable({
         datatableApi: $("#datatable").DataTable({
@@ -27,7 +40,7 @@ $(function () {
                     "data": "dateTime",
                     "render": function (date, type, row) {
                         if (type === 'display') {
-                            return date.replace('T', ' ').substr(0, 16);
+                            formatDate(date);
                         }
                         return date;
                     }
@@ -60,6 +73,38 @@ $(function () {
             },
             "initComplete": makeEditable
         }),
-        updateTable: updateFilteredTable
+        // updateTable: updateFilteredTable
+    });
+
+    $.datetimepicker.setLocale(localeCode);
+    //  http://xdsoft.net/jqplugins/datetimepicker/
+    const startDate = $('#startDate');
+    const endDate = $('#endDate');
+    startDate.datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d',
+        formatDate: 'Y-m-d',
+        onShow: function (ct) {
+            this.setOptions({
+                maxDate: endDate.val() ? endDate.val() : false
+            })
+        }
+    });
+    endDate.datetimepicker({
+        timepicker: false,
+        format: 'Y-m-d',
+        formatDate: 'Y-m-d',
+        onShow: function (ct) {
+            this.setOptions({
+                minDate: startDate.val() ? startDate.val() : false
+            })
+        }
+    });
+    $('#startTime, #endTime').datetimepicker({
+        datepicker: false,
+        format: 'H:i'
+    });
+    $('#dateTime').datetimepicker({
+        format: 'Y-m-d H:i'
     });
 });
