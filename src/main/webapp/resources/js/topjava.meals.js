@@ -1,27 +1,36 @@
-const ajaxUrl = "ajax/profile/meals/";
+const mealAjaxUrl = "ajax/profile/meals/";
 
 function updateFilteredTable() {
     $.ajax({
         type: "GET",
-        url: ajaxUrl + "filter",
-        data: $("#filter").serialize(),
+        url: mealAjaxUrl + "filter",
+        data: $("#filter").serialize()
     }).done(updateTableByData);
 }
 
 function clearFilter() {
     $("#filter")[0].reset();
-    $.get(ajaxUrl, updateTableByData);
+    $.get(mealAjaxUrl, updateTableByData);
 }
 
 $(function () {
     makeEditable({
-        ajaxUrl: ajaxUrl,
         datatableApi: $("#datatable").DataTable({
+            "ajax": {
+                "url": mealAjaxUrl,
+                "dataSrc": ""
+            },
             "paging": false,
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime"
+                    "data": "dateTime",
+                    "render": function (date, type, row) {
+                        if (type === 'display') {
+                            return date.replace('T', ' ').substr(0, 16);
+                        }
+                        return date;
+                    }
                 },
                 {
                     "data": "description"
@@ -30,11 +39,13 @@ $(function () {
                     "data": "calories"
                 },
                 {
-                    "defaultContent": "Edit",
+                    "render": renderEditBtn,
+                    "defaultContent": "",
                     "orderable": false
                 },
                 {
-                    "defaultContent": "Delete",
+                    "render": renderDeleteBtn,
+                    "defaultContent": "",
                     "orderable": false
                 }
             ],
@@ -44,6 +55,10 @@ $(function () {
                     "desc"
                 ]
             ],
+            "createdRow": function (row, data, dataIndex) {
+                $(row).attr("data-mealExcess", data.excess);
+            },
+            "initComplete": makeEditable
         }),
         updateTable: updateFilteredTable
     });
