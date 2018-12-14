@@ -7,15 +7,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
-import ru.javawebinar.topjava.to.MealTo;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
 import ru.javawebinar.topjava.web.json.JsonUtil;
 
 import java.time.LocalDateTime;
 import java.time.Month;
 
-import static java.time.LocalDateTime.of;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -74,17 +71,17 @@ class MealRestControllerTest extends AbstractControllerTest {
 
     @Test
     void testUpdate() throws Exception {
-        MealTo updatedTo = new MealTo(of(2015, Month.MAY, 30, 9, 1),
-                "Updated description", 500, USER_MEAL_ID, false);
+        Meal updated = new Meal(USER_MEAL_0);
+        updated.setDescription("Updated description");
 
         mockMvc.perform(put(REST_URL + USER_MEAL_ID)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(JsonUtil.writeValue(updatedTo))
+                .content(JsonUtil.writeValue(updated))
                 .with(userHttpBasic(USER)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(mealService.get(USER_MEAL_ID, USER_ID), MealsUtil.updateFromTo(new Meal(USER_MEAL_0), updatedTo));
+        assertMatch(mealService.get(USER_MEAL_ID, USER_ID), updated);
     }
 
 
