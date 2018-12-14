@@ -28,19 +28,14 @@ $.ajaxSetup({
 
 $(function () {
     makeEditable({
-        datatableApi: $("#datatable").DataTable({
-            "ajax": {
-                "url": mealAjaxUrl,
-                "dataSrc": ""
-            },
-            "paging": false,
-            "info": true,
+        ajaxUrl: mealAjaxUrl,
+        datatableOpts: {
             "columns": [
                 {
                     "data": "dateTime",
                     "render": function (date, type, row) {
                         if (type === 'display') {
-                            formatDate(date);
+                            return formatDate(date);
                         }
                         return date;
                     }
@@ -71,12 +66,10 @@ $(function () {
             "createdRow": function (row, data, dataIndex) {
                 $(row).attr("data-mealExcess", data.excess);
             },
-            "initComplete": makeEditable
-        }),
-        // updateTable: updateFilteredTable
+        },
+        updateTable: updateFilteredTable
     });
 
-    $.datetimepicker.setLocale(localeCode);
     //  http://xdsoft.net/jqplugins/datetimepicker/
     const startDate = $('#startDate');
     const endDate = $('#endDate');
@@ -100,10 +93,28 @@ $(function () {
             })
         }
     });
-    $('#startTime, #endTime').datetimepicker({
+
+    const startTime = $('#startTime');
+    const endTime = $('#endTime');
+    startTime.datetimepicker({
         datepicker: false,
-        format: 'H:i'
+        format: 'H:i',
+        onShow: function (ct) {
+            this.setOptions({
+                maxTime: endTime.val() ? endTime.val() : false
+            })
+        }
     });
+    endTime.datetimepicker({
+        datepicker: false,
+        format: 'H:i',
+        onShow: function (ct) {
+            this.setOptions({
+                minTime: startTime.val() ? startTime.val() : false
+            })
+        }
+    });
+
     $('#dateTime').datetimepicker({
         format: 'Y-m-d H:i'
     });
