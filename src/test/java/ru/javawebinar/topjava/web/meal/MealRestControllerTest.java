@@ -52,6 +52,13 @@ class MealRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    void testGetNotFound() throws Exception {
+        mockMvc.perform(get(REST_URL + ADMIN_MEAL_ID)
+                .with(userHttpBasic(USER)))
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
     void testCreateWithLocation() throws Exception {
         Meal expected = new Meal(LocalDateTime.now(), "One more meal", 1000, null);
         ResultActions action = mockMvc.perform(post(REST_URL)
@@ -67,6 +74,14 @@ class MealRestControllerTest extends AbstractControllerTest {
         assertMatch(mealService.getAll(USER_ID), expected, USER_MEAL_6, USER_MEAL_5, USER_MEAL_4, USER_MEAL_3,
                 USER_MEAL_2, USER_MEAL_1, USER_MEAL_0);
 
+    }
+
+    @Test
+    void testDeleteNotFound() throws Exception {
+        mockMvc.perform(delete(REST_URL + ADMIN_MEAL_ID)
+                .with(userHttpBasic(USER)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
