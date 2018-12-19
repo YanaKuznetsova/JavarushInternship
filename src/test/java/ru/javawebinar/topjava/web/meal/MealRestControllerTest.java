@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.exception.ErrorType;
@@ -20,11 +21,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
+import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.TestUtil.*;
-import static ru.javawebinar.topjava.UserTestData.USER;
-import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.util.MealsUtil.convertToExcess;
 import static ru.javawebinar.topjava.util.MealsUtil.getWithExcess;
+import static ru.javawebinar.topjava.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_DATETIME;
 
 class MealRestControllerTest extends AbstractControllerTest {
 
@@ -172,7 +174,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value(ErrorType.VALIDATION_ERROR.name()))
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
                 .andDo(print());
     }
 
@@ -187,10 +189,37 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(USER)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.type").value(ErrorType.VALIDATION_ERROR.name()))
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
                 .andDo(print());
+    }
 
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void testUpdateDuplicate() throws Exception {
+        Meal invalid = new Meal(USER_MEAL_2.getDateTime(), "Dummy", 200, USER_MEAL_ID);
 
+        mockMvc.perform(put(REST_URL + USER_MEAL_0)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid))
+                .with(userHttpBasic(USER)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
+                .andExpect(jsonMessage("$.details", EXCEPTION_DUPLICATE_DATETIME));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void testCreateDuplicate() throws Exception {
+        Meal invalid = new Meal(ADMIN_MEAL_0.getDateTime(), "Dummy", 200, null);
+        mockMvc.perform(post(REST_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid))
+                .with(userHttpBasic(ADMIN)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
+                .andExpect(jsonMessage("$.details", EXCEPTION_DUPLICATE_DATETIME));
     }
 
 }
