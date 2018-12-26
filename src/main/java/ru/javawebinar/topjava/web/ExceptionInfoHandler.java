@@ -23,8 +23,6 @@ import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -39,14 +37,9 @@ public class ExceptionInfoHandler {
     public static final String EXCEPTION_DUPLICATE_EMAIL = "exception.user.duplicateEmail";
     public static final String EXCEPTION_DUPLICATE_DATETIME = "exception.meal.duplicateDateTime";
 
-    private static final Map<String, String> CONSTRAINS_I18N_MAP = Collections.unmodifiableMap(
-            new HashMap<String, String>() {
-                {
-                    put("users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL);
-                    put("meals_unique_user_datetime_idx", EXCEPTION_DUPLICATE_DATETIME);
-                }
-            }
-    );
+    private static final Map<String, String> CONSTRAINS_I18N_MAP = Map.of(
+            "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
+            "meals_unique_user_datetime_index", EXCEPTION_DUPLICATE_DATETIME);
 
     @Autowired
     private MessageUtil messageUtil;
@@ -91,7 +84,7 @@ public class ExceptionInfoHandler {
         BindingResult bindingResult = e instanceof BindException ?
                 ((BindException) e).getBindingResult() : ((MethodArgumentNotValidException) e).getBindingResult();
 
-        String details[] = bindingResult.getFieldErrors()
+        String[] details = bindingResult.getFieldErrors()
                 .stream()
                 .map(fe -> {
                     String msg = fe.getDefaultMessage();
