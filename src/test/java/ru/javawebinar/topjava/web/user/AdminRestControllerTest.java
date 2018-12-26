@@ -18,7 +18,8 @@ import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.TestUtil.readFromJsonResultActions;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
@@ -136,7 +137,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(jsonWithPassword(invalid, "newPass")))
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.type").value(ErrorType.VALIDATION_ERROR.name()))
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
                 .andDo(print());
     }
 
@@ -150,7 +151,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(invalid)))
                 .andExpect(status().isUnprocessableEntity())
                 .andDo(print())
-                .andExpect(jsonPath("$.type").value(ErrorType.VALIDATION_ERROR.name()))
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
                 .andDo(print());
     }
 
@@ -165,7 +166,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .content(jsonWithPassword(updated, "password")))
                 .andExpect(status().isConflict())
                 .andExpect(errorType(ErrorType.VALIDATION_ERROR))
-                .andExpect(jsonMessage("$.details", EXCEPTION_DUPLICATE_EMAIL))
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_EMAIL))
                 .andDo(print());
     }
 
@@ -179,9 +180,7 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(ADMIN))
                 .content(jsonWithPassword(expected, "newPass")))
                 .andExpect(status().isConflict())
-                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
-                .andExpect(jsonMessage("$.details", EXCEPTION_DUPLICATE_EMAIL));
-
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR));
     }
 
 }

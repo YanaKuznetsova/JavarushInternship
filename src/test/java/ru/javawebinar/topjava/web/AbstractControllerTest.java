@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import ru.javawebinar.topjava.AllActiveProfileResolver;
 import ru.javawebinar.topjava.repository.JpaUtil;
+import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.util.exception.ErrorType;
 
 import javax.annotation.PostConstruct;
@@ -32,9 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(resolver = AllActiveProfileResolver.class)
 abstract public class AbstractControllerTest {
 
-    @Autowired
-    protected MessageUtil messageUtil;
-
     private static final CharacterEncodingFilter CHARACTER_ENCODING_FILTER = new CharacterEncodingFilter();
 
     static {
@@ -51,7 +49,13 @@ abstract public class AbstractControllerTest {
     private JpaUtil jpaUtil;
 
     @Autowired
+    protected UserService userService;
+
+    @Autowired
     private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    protected MessageUtil messageUtil;
 
     @PostConstruct
     private void postConstruct() {
@@ -70,7 +74,7 @@ abstract public class AbstractControllerTest {
         }
     }
 
-    protected String getMessage(String code) {
+    private String getMessage(String code) {
         return messageUtil.getMessage(code, Locale.ENGLISH);
     }
 
@@ -78,7 +82,7 @@ abstract public class AbstractControllerTest {
         return jsonPath("$.type").value(type.name());
     }
 
-    public ResultMatcher jsonMessage(String path, String code) {
-        return jsonPath(path).value(getMessage(code));
+    public ResultMatcher detailMessage(String code) {
+        return jsonPath("$.details").value(getMessage(code));
     }
 }

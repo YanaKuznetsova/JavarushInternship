@@ -18,7 +18,8 @@ import java.time.Month;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.MealTestData.assertMatch;
 import static ru.javawebinar.topjava.TestUtil.*;
@@ -172,7 +173,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(invalid)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.type").value(ErrorType.VALIDATION_ERROR.name()))
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
                 .andDo(print());
     }
 
@@ -187,7 +188,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .with(userHttpBasic(USER)))
                 .andDo(print())
                 .andExpect(status().isUnprocessableEntity())
-                .andExpect(jsonPath("$.type").value(ErrorType.VALIDATION_ERROR.name()))
+                .andExpect(errorType(ErrorType.VALIDATION_ERROR))
                 .andDo(print());
     }
 
@@ -196,14 +197,14 @@ class MealRestControllerTest extends AbstractControllerTest {
     void testUpdateDuplicate() throws Exception {
         Meal invalid = new Meal(USER_MEAL_2.getDateTime(), "Dummy", 200, USER_MEAL_ID);
 
-        mockMvc.perform(put(REST_URL + USER_MEAL_0)
+        mockMvc.perform(put(REST_URL + USER_MEAL_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(invalid))
                 .with(userHttpBasic(USER)))
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(errorType(ErrorType.VALIDATION_ERROR))
-                .andExpect(jsonMessage("$.details", EXCEPTION_DUPLICATE_DATETIME));
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_DATETIME));
     }
 
     @Test
@@ -217,7 +218,7 @@ class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andExpect(errorType(ErrorType.VALIDATION_ERROR))
-                .andExpect(jsonMessage("$.details", EXCEPTION_DUPLICATE_DATETIME));
+                .andExpect(detailMessage(EXCEPTION_DUPLICATE_DATETIME));
     }
 
 }
