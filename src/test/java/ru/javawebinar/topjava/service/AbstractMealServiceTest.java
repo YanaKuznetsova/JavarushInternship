@@ -95,7 +95,7 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
 
     @Test
     void testValidation() throws Exception {
-        Assumptions.assumeTrue(isJpaBased());
+        Assumptions.assumeTrue(isJpaBased(), "Validation not supported (only for JPA)");
         validateRootCause(() -> service.create(new Meal(of(2015, Month.JUNE, 1, 18, 0),
                 "  ", 300, null), USER_ID), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new Meal(null, "Description", 300,

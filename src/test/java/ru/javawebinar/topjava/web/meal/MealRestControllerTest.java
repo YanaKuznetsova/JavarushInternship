@@ -104,7 +104,6 @@ class MealRestControllerTest extends AbstractControllerTest {
         assertMatch(mealService.get(USER_MEAL_ID, USER_ID), updated);
     }
 
-
     @Test
     void testDelete() throws Exception {
         mockMvc.perform(delete(REST_URL + USER_MEAL_ID)

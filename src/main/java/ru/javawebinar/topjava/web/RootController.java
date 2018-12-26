@@ -3,7 +3,6 @@ package ru.javawebinar.topjava.web;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +37,7 @@ public class RootController extends AbstractUserController {
     }
 
     @GetMapping("/meals")
-    public String meals(Model model) {
+    public String meals() {
         return "meals";
     }
 
