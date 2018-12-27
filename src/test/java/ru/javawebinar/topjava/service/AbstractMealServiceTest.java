@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.util.exception.ErrorType;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -13,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.time.LocalDateTime.of;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
@@ -45,7 +46,10 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         updated.setId(ADMIN_MEAL_ID);
         NotFoundException exception = assertThrows(NotFoundException.class, () ->
                 service.update(updated, USER_ID));
-        assertEquals(exception.getMessage(), "Not found entity with id=" + ADMIN_MEAL_ID);
+        String message = exception.getMessage();
+        assertTrue(message.contains(ErrorType.DATA_NOT_FOUND.name()));
+        assertTrue(message.contains(NotFoundException.NOT_FOUND_EXCEPTION));
+        assertTrue(message.contains(String.valueOf(ADMIN_MEAL_ID)));
     }
 
     @Test
@@ -58,7 +62,10 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     void getUnauthorizedMeal() {
         NotFoundException exception = assertThrows(NotFoundException.class, () ->
                 service.get(ADMIN_MEAL_ID, USER_ID));
-        assertEquals(exception.getMessage(), "Not found entity with id=" + ADMIN_MEAL_ID);
+        String message = exception.getMessage();
+        assertTrue(message.contains(ErrorType.DATA_NOT_FOUND.name()));
+        assertTrue(message.contains(NotFoundException.NOT_FOUND_EXCEPTION));
+        assertTrue(message.contains(String.valueOf(ADMIN_MEAL_ID)));
     }
 
     @Test
@@ -71,14 +78,20 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
     void deleteUnauthorizedMeal() {
         NotFoundException exception = assertThrows(NotFoundException.class, () ->
                 service.delete(ADMIN_MEAL_ID, USER_ID));
-        assertEquals(exception.getMessage(), "Not found entity with id=" + ADMIN_MEAL_ID);
+        String message = exception.getMessage();
+        assertTrue(message.contains(ErrorType.DATA_NOT_FOUND.name()));
+        assertTrue(message.contains(NotFoundException.NOT_FOUND_EXCEPTION));
+        assertTrue(message.contains(String.valueOf(ADMIN_MEAL_ID)));
     }
 
     @Test
     void deleteNonexistentMeal() {
         NotFoundException exception = assertThrows(NotFoundException.class, () ->
                 service.delete(1, USER_ID));
-        assertEquals(exception.getMessage(), "Not found entity with id=1");
+        String message = exception.getMessage();
+        assertTrue(message.contains(ErrorType.DATA_NOT_FOUND.name()));
+        assertTrue(message.contains(NotFoundException.NOT_FOUND_EXCEPTION));
+        assertTrue(message.contains(String.valueOf(1)));
     }
 
     @Test
@@ -104,6 +117,15 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
                 "Description", 9, null), USER_ID), ConstraintViolationException.class);
         validateRootCause(() -> service.create(new Meal(of(2015, Month.JUNE, 1, 18, 0),
                 "Description", 10001, null), USER_ID), ConstraintViolationException.class);
+    }
+
+    @Test
+    void updateNotFound() throws Exception {
+        NotFoundException e = assertThrows(NotFoundException.class, () -> service.update(USER_MEAL_0, ADMIN_ID));
+        String msg = e.getMessage();
+        assertTrue(msg.contains(ErrorType.DATA_NOT_FOUND.name()));
+        assertTrue(msg.contains(NotFoundException.NOT_FOUND_EXCEPTION));
+        assertTrue(msg.contains(String.valueOf(USER_MEAL_ID)));
     }
 
 }
